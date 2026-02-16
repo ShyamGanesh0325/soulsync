@@ -1,0 +1,16 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+catboost
+pydantic
+python-multipart
+category_encoders
+sqlalchemy
+passlib[bcrypt]
+python-jose[cryptography]
+email-validator
+psycopg2-binary
+gunicorn
+better_profanity

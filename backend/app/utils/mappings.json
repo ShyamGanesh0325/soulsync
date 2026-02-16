@@ -1,0 +1,69 @@
+{
+  "gender": {
+    "male": 1,
+    "female": 2,
+    "nonbinary": 3,
+    "nan": -2
+  },
+  "location": {
+    "Coimbatore": 1,
+    "Delhi": 2,
+    "Hyderabad": 3,
+    "Surat": 4,
+    "Vizag": 5,
+    "Jaipur": 6,
+    "Pune": 7,
+    "Trichy": 8,
+    "Kochi": 9,
+    "Madurai": 10,
+    "Kolkata": 11,
+    "Ahmedabad": 12,
+    "Bangalore": 13,
+    "Chennai": 14,
+    "Mumbai": 15,
+    "nan": -2
+  },
+  "zodiac_sign": {
+    "Capricorn": 1,
+    "Gemini": 2,
+    "Libra": 3,
+    "Taurus": 4,
+    "Aries": 5,
+    "Aquarius": 6,
+    "Pisces": 7,
+    "Leo": 8,
+    "Cancer": 9,
+    "Sagittarius": 10,
+    "Scorpio": 11,
+    "Virgo": 12,
+    "nan": -2
+  },
+  "relationship_goal": {
+    "friendship": 1,
+    "serious": 2,
+    "casual": 3,
+    "not_sure": 4,
+    "nan": -2
+  },
+  "fav_music_genre": {
+    "classical": 1,
+    "kpop": 2,
+    "pop": 3,
+    "lofi": 4,
+    "rap": 5,
+    "rock": 6,
+    "indie": 7,
+    "nan": -2
+  },
+  "bio_text": {
+    "Pet friendly and book lover.": 1,
+    "Gym mornings, chai evenings.": 2,
+    "Always exploring something new.": 3,
+    "Tamil songs + long walks = perfect day.": 4,
+    "Music lover, movie binge watcher.": 5,
+    "Love travel and good food!": 6,
+    "Calm person but fun once you know me.": 7,
+    "Weekend trips and night drives addict.": 8,
+    "nan": -2
+  }
+}
