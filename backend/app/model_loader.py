@@ -17,16 +17,22 @@ class ModelLoader:
             return
 
         print("🚀 Starting lazy load of ML models...")
-        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        model_path = os.path.join(base_path, "models", "soul_sync_model.pkl")
-        scaler_path = os.path.join(base_path, "models", "scaler.pkl")
+        # Use absolute path from /app
+        model_path = "/app/models/soul_sync_model.pkl"
+        scaler_path = "/app/models/scaler.pkl"
+
+        # Fallback for local dev if /app doesn't exist
+        if not os.path.exists(model_path):
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            model_path = os.path.join(base_dir, "models", "soul_sync_model.pkl")
+            scaler_path = os.path.join(base_dir, "models", "scaler.pkl")
 
         # Load CatBoost Model
         if os.path.exists(model_path):
             try:
                 with open(model_path, "rb") as f:
                     self._model = pickle.load(f)
-                print("✅ Model loaded successfully.")
+                print(f"✅ Model loaded successfully from {model_path}.")
             except Exception as e:
                 print(f"❌ Error loading model: {e}")
         else:
