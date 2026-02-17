@@ -29,4 +29,4 @@ EXPOSE 8000
 
 # Run the application with Gunicorn and Uvicorn workers
 # Binding to 0.0.0.0:$PORT is critical for Render
-CMD gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:$PORT
+CMD gunicorn -w 1 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:$PORT
