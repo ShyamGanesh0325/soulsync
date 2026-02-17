@@ -6,9 +6,10 @@ import { useTheme } from '../contexts/ThemeContext';
 interface SettingsProps {
     isOpen: boolean;
     onClose: () => void;
+    onLogout: () => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
+const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
     const { theme, toggleTheme } = useTheme();
     const [notifications, setNotifications] = useState(true);
     const [safeMode, setSafeMode] = useState(true);
@@ -16,8 +17,14 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
     const [ageRange, setAgeRange] = useState([18, 35]);
     const [showMe, setShowMe] = useState<'Everyone' | 'Men' | 'Women'>('Everyone');
 
+    const handleLogout = () => {
+        onLogout();
+        onClose();
+    };
+
     return (
         <AnimatePresence>
+            {/* ... (previous code remains same) ... */}
             {isOpen && (
                 <>
                     {/* Backdrop */}
@@ -170,30 +177,21 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose }) => {
                                             />
                                         </div>
                                     </div>
+                                </div>
 
-                                    {/* Show Me */}
-                                    <div className="space-y-3">
-                                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300">Show Me</label>
-                                        <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-xl">
-                                            {['Men', 'Women', 'Everyone'].map((option) => (
-                                                <button
-                                                    key={option}
-                                                    onClick={() => setShowMe(option as 'Men' | 'Women' | 'Everyone')}
-                                                    className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${showMe === option
-                                                        ? 'bg-white dark:bg-gray-700 text-primary shadow-sm'
-                                                        : 'text-gray-500 dark:text-gray-400 hover:text-gray-700'
-                                                        }`}
-                                                >
-                                                    {option}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
+                                {/* Logout Button */}
+                                <div className="pt-4 border-t border-gray-200 dark:border-gray-800">
+                                    <button
+                                        onClick={handleLogout}
+                                        className="w-full py-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 font-bold rounded-2xl hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+                                    >
+                                        Logout
+                                    </button>
                                 </div>
 
                                 {/* Info */}
-                                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                                <div className="pt-2">
+                                    <p className="text-[10px] text-gray-500 dark:text-gray-400 text-center">
                                         SoulSync v1.0 • Built with AI ✨
                                     </p>
                                 </div>

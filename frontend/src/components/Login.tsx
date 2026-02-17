@@ -26,14 +26,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         // Simulate syncing data from google
         setTimeout(() => {
             setIsLoading(false);
-            // For now just mock login success
+            alert("Google Login is currently in Demo Mode. Please use the Email Login for a real production session.");
             onLogin();
         }, 2000);
     };
 
     const handlePhoneSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Placeholder for future phone auth
+        alert("Phone Login is currently unavailable. Please use Email Login.");
     };
 
     const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -48,23 +48,24 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     email,
                     password,
                     full_name: fullName,
-                    // Default values for required fields
                     age: 18,
                     gender: 'Other',
                     location: 'Unknown'
                 });
                 // Auto login after register
                 const token = await login({ email, password });
+                console.log("💾 Register successful, saving token to localStorage:", token.access_token);
                 localStorage.setItem('token', token.access_token);
                 onLogin();
             } else {
                 // Login
                 const token = await login({ email, password });
+                console.log("💾 Login successful, saving token to localStorage:", token.access_token);
                 localStorage.setItem('token', token.access_token);
                 onLogin();
             }
         } catch (err: any) {
-            console.error(err);
+            console.error("Auth Error:", err);
             setError(isSignUp ? "Registration failed. Email might be taken." : "Login failed. Check your credentials.");
             setIsLoading(false);
         }
