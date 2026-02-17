@@ -10,7 +10,7 @@ import Settings from './components/Settings';
 import MatchCelebration from './components/MatchCelebration';
 import LoadingOverlay from './components/LoadingOverlay';
 import type { UserProfile, PredictionResponse } from './types';
-import { predictCompatibility, getCurrentUser, type UserResponse } from './api';
+import { predictCompatibility, getCurrentUser, type UserResponse, API_URL } from './api';
 import { Sparkles, Settings as SettingsIcon } from 'lucide-react';
 import axios from 'axios';
 
@@ -58,9 +58,7 @@ function App() {
         .then((user: UserResponse) => {
           setUserData(user);
           setIsLoggedIn(true);
-          // If user has data, maybe skip input? 
-          // For now, let them go to input to refine/predict.
-          // Or if we had prediction stored, we could go to matches.
+          loadMatches();
           setCurrentView('input');
         })
         .catch(() => {
@@ -79,7 +77,7 @@ function App() {
   // Load matches when needed
   const loadMatches = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/matches`);
+      const response = await axios.get(`${API_URL}/matches`);
       setMatches(response.data.matches || []);
     } catch (err) {
       console.error('Error loading matches:', err);
