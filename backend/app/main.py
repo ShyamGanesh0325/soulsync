@@ -13,9 +13,9 @@ app = FastAPI(title="SoulSync API", version="1.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["Content-Type", "Authorization", "Accept"],
 )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])

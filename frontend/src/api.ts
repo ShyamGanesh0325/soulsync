@@ -33,9 +33,11 @@ export interface Token {
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers.set('Authorization', `Bearer ${token}`);
     }
     return config;
+}, (error) => {
+    return Promise.reject(error);
 });
 
 export const register = async (user: UserCreate): Promise<any> => {
