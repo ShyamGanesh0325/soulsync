@@ -5,6 +5,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <script>
+    // Silence persistent internal/external warnings that clutter the console
+    (function () {
+      const originalWarn = console.warn;
+      const originalError = console.error;
+      const ignoredMessages = [
+        'Deprecated API for given entry type',
+        'preloaded using link preload but not used',
+        'build.chunkSizeWarningLimit',
+        'createWithEqualityFn',
+        'PerformanceObserver'
+      ];
+
+      console.warn = function (...args) {
+        const msg = args[0];
+        if (typeof msg === 'string' && ignoredMessages.some(m => msg.includes(m))) return;
+        originalWarn.apply(console, args);
+      };
+
+      console.error = function (...args) {
+        const msg = args[0];
+        // Silence 404s coming from Vercel's dashboard scripts
+        if (typeof msg === 'string' && msg.includes('/api/v2/projects/')) return;
+        originalError.apply(console, args);
+      };
+    })();
+  </script>
+
   <!-- SEO & Premium Branding -->
   <title>SoulSync | Find Your Frequency</title>
   <meta name="description" content="AI-powered matchmaking to find your soul's perfect resonance." />
