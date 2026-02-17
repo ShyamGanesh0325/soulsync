@@ -79,7 +79,7 @@ function App() {
   // Load matches when needed
   const loadMatches = async () => {
     try {
-      const response = await axios.get('http://localhost:8000/api/matches');
+      const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/matches`);
       setMatches(response.data.matches || []);
     } catch (err) {
       console.error('Error loading matches:', err);
