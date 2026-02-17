@@ -6,29 +6,42 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <script>
-    // Silence persistent internal/external warnings that clutter the console
+    // 🛡️ High-Priority Console Filter (Silences external system warnings)
     (function () {
       const originalWarn = console.warn;
       const originalError = console.error;
-      const ignoredMessages = [
+      const originalLog = console.log;
+
+      const ignoredPatterns = [
         'Deprecated API for given entry type',
         'preloaded using link preload but not used',
         'build.chunkSizeWarningLimit',
         'createWithEqualityFn',
-        'PerformanceObserver'
+        'PerformanceObserver',
+        'useStoreWithEqualityFn',
+        'zustand/traditional',
+        '/api/v2/projects/'
       ];
 
-      console.warn = function (...args) {
+      const shouldIgnore = (args) => {
         const msg = args[0];
-        if (typeof msg === 'string' && ignoredMessages.some(m => msg.includes(m))) return;
+        if (typeof msg !== 'string') return false;
+        return ignoredPatterns.some(pattern => msg.includes(pattern));
+      };
+
+      console.warn = function (...args) {
+        if (shouldIgnore(args)) return;
         originalWarn.apply(console, args);
       };
 
       console.error = function (...args) {
-        const msg = args[0];
-        // Silence 404s coming from Vercel's dashboard scripts
-        if (typeof msg === 'string' && msg.includes('/api/v2/projects/')) return;
+        if (shouldIgnore(args)) return;
         originalError.apply(console, args);
+      };
+
+      console.log = function (...args) {
+        if (shouldIgnore(args)) return;
+        originalLog.apply(console, args);
       };
     })();
   </script>
