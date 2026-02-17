@@ -14,6 +14,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
+        "https://soulsync-omega-sepia.vercel.app",
         "https://soulsync-git-main-shyamganesh-ss-projects.vercel.app",
         "https://soulsync.vercel.app",
     ],
