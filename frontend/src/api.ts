@@ -3,6 +3,13 @@ import type { UserProfile, PredictionResponse } from './types';
 
 export const API_URL = 'https://soulsync-erxq.onrender.com/api';
 
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
 console.log("🌐 SoulSync API Connection initialized at:", API_URL);
 
 // Auth Interfaces
@@ -23,7 +30,7 @@ export interface Token {
 }
 
 // Axios Interceptor for Auth
-axios.interceptors.request.use((config) => {
+api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -33,7 +40,7 @@ axios.interceptors.request.use((config) => {
 
 export const register = async (user: UserCreate): Promise<any> => {
     try {
-        const response = await axios.post(`${API_URL}/auth/register`, user);
+        const response = await api.post('/auth/register', user);
         return response.data;
     } catch (error) {
         console.error("Registration error:", error);
@@ -43,12 +50,14 @@ export const register = async (user: UserCreate): Promise<any> => {
 
 export const login = async (credentials: UserLogin): Promise<Token> => {
     try {
-        // FastAPI OAuth2PasswordRequestForm expects form data, not JSON
         const formData = new FormData();
         formData.append('username', credentials.email);
         formData.append('password', credentials.password);
 
-        const response = await axios.post<Token>(`${API_URL}/auth/login`, formData);
+        // For login, we don't send default JSON header because it's form data
+        const response = await api.post<Token>('/auth/login', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' }
+        });
         return response.data;
     } catch (error) {
         console.error("Login error:", error);
@@ -58,7 +67,7 @@ export const login = async (credentials: UserLogin): Promise<Token> => {
 
 export const predictCompatibility = async (profile: UserProfile): Promise<PredictionResponse> => {
     try {
-        const response = await axios.post<PredictionResponse>(`${API_URL}/predict_compatibility`, profile);
+        const response = await api.post<PredictionResponse>('/predict_compatibility', profile);
         return response.data;
     } catch (error) {
         console.error("Error predicting compatibility:", error);
@@ -83,7 +92,7 @@ export interface MessageResponse {
 
 export const getChatHistory = async (matchId: string): Promise<Message[]> => {
     try {
-        const response = await axios.get<{ messages: Message[] }>(`${API_URL}/chat/${matchId}`);
+        const response = await api.get<{ messages: Message[] }>(`/chat/${matchId}`);
         return response.data.messages;
     } catch (error) {
         console.error("Error fetching chat history:", error);
@@ -93,7 +102,7 @@ export const getChatHistory = async (matchId: string): Promise<Message[]> => {
 
 export const sendMessage = async (matchId: string, text: string): Promise<MessageResponse> => {
     try {
-        const response = await axios.post<MessageResponse>(`${API_URL}/chat/send`, {
+        const response = await api.post<MessageResponse>('/chat/send', {
             match_id: matchId,
             text: text,
             sender: 'user'
@@ -113,9 +122,11 @@ export interface UserResponse extends UserProfile {
 
 export const getCurrentUser = async (): Promise<UserResponse> => {
     try {
-        const response = await axios.get<UserResponse>(`${API_URL}/auth/me`);
+        const response = await api.get<UserResponse>('/auth/me');
         return response.data;
     } catch (error) {
         throw error;
     }
 };
+
+export default api;

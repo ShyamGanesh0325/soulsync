@@ -10,9 +10,8 @@ import Settings from './components/Settings';
 import MatchCelebration from './components/MatchCelebration';
 import LoadingOverlay from './components/LoadingOverlay';
 import type { UserProfile, PredictionResponse } from './types';
-import { predictCompatibility, getCurrentUser, type UserResponse, API_URL } from './api';
+import api, { predictCompatibility, getCurrentUser, type UserResponse, API_URL } from './api';
 import { Sparkles, Settings as SettingsIcon } from 'lucide-react';
-import axios from 'axios';
 
 type View = 'login' | 'input' | 'prediction' | 'matches' | 'chat' | 'swipe' | 'bots';
 
@@ -77,7 +76,7 @@ function App() {
   // Load matches when needed
   const loadMatches = async () => {
     try {
-      const response = await axios.get(`${API_URL}/matches`);
+      const response = await api.get('/matches');
       setMatches(response.data.matches || []);
     } catch (err) {
       console.error('Error loading matches:', err);
