@@ -9,7 +9,9 @@ export default defineConfig({
     port: 5173,
   },
   build: {
-    modulePreload: false,
+    modulePreload: {
+      polyfill: false
+    },
     chunkSizeWarningLimit: 2000,
     rollupOptions: {
       output: {
