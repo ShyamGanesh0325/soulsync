@@ -73,6 +73,15 @@ function App() {
     setCurrentView('input');
   };
 
+  const handleLogout = () => {
+    console.log("👋 Logging out, clearing session...");
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    setUserData(null);
+    setMatches([]);
+    setCurrentView('login');
+  };
+
   // Load matches when needed
   const loadMatches = async () => {
     try {
@@ -156,7 +165,11 @@ function App() {
       )}
 
       {/* Settings Modal */}
-      <Settings isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <Settings
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onLogout={handleLogout}
+      />
 
       {/* Global Loading Overlay */}
       <AnimatePresence>
