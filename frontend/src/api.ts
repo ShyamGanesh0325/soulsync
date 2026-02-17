@@ -33,7 +33,10 @@ export interface Token {
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
+        console.log("🔑 API Request: Attaching authorization token");
         config.headers.set('Authorization', `Bearer ${token}`);
+    } else {
+        console.warn("⚠️ API Warning: No token found in localStorage for request:", config.url);
     }
     return config;
 }, (error) => {
