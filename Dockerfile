@@ -4,7 +4,7 @@ FROM python:3.11-slim
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PORT 8000
+ENV PORT 10000
 
 # Set work directory
 WORKDIR /app
@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY backend/ /app/
 
 # Expose the port Render expects
-EXPOSE 8000
+EXPOSE 10000
 
 # Run the application with Gunicorn and Uvicorn workers
 # Binding to 0.0.0.0:$PORT is critical for Render
