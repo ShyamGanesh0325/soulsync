@@ -18,7 +18,8 @@ RUN apt-get update && apt-get install -y \
 # Install Python dependencies
 COPY backend/requirements.txt /app/
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt
+    pip install --no-cache-dir -r requirements.txt && \
+    python -m textblob.download_corpora
 
 # Copy project files
 COPY backend/ /app/
