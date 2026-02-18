@@ -196,9 +196,33 @@ async def send_message(message: MessagePayload, db: Session = Depends(get_db), c
                 }
             )
         
-        # Generate bot response after a delay (simulated)
-        bot_responses = BOT_RESPONSES.get(message.match_id, ["That's interesting!"])
-        bot_text = random.choice(bot_responses)
+        # If toxic, return warning
+        if final_toxic:
+            return MessageResponse(
+                success=False,
+                is_toxic=True,
+                warning="This message contains inappropriate content. Please be respectful.",
+                message={
+                    "id": user_msg.id,
+                    "text": user_msg.text,
+                    "sender": "user",
+                    "timestamp": user_msg.timestamp.isoformat(),
+                    "is_toxic": True
+                }
+            )
+        
+        # Generate dynamic bot response using AI Service
+        from app.services.ai_service import get_bot_response
+        
+        # Fetch recent history for context (last 5 messages)
+        history_objs = db.query(MessageModel).filter(
+            MessageModel.user_id == current_user.id,
+            MessageModel.match_id == message.match_id
+        ).order_by(MessageModel.timestamp.desc()).limit(6).all()
+        
+        history = [{"text": m.text, "sender": m.sender} for m in reversed(history_objs)]
+        
+        bot_text = await get_bot_response(message.match_id, message.text, history)
         
         bot_msg = MessageModel(
             user_id=current_user.id,
@@ -216,17 +240,7 @@ async def send_message(message: MessagePayload, db: Session = Depends(get_db), c
             success=True,
             is_toxic=False,
             message={
-                "id": user_msg.id, # Return user message ID for confirmation, or maybe bot's?
-                # Actually frontend expects 'message' to be the one just sent.
-                # But we also triggered a bot response. Frontend usually polls or we send it back?
-                # The current frontend implementation appends the returned 'message' to the list.
-                # It doesn't handle the bot response immediately in the return.
-                # Wait, looking at previous code:
-                # User sends, gets response. Response contains "message" (the user's msg).
-                # Bot message was appended to MESSAGES.
-                # Frontend re-fetches or appends?
-                # Let's assume frontend refetches or we just return success.
-                # Returning the user message is fine.
+                "id": user_msg.id,
                 "text": user_msg.text,
                 "sender": "user",
                 "timestamp": user_msg.timestamp.isoformat(),
