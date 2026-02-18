@@ -26,14 +26,14 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         // Simulate syncing data from google
         setTimeout(() => {
             setIsLoading(false);
-            alert("Google Login is currently in Demo Mode. Please use the Email Login for a real production session.");
-            onLogin();
+            alert("Google Login is currently in Demo Mode. PROD NOTICE: Use the Email Login with your registered credentials to save a session.");
+            // onLogin() removed to prevent tokenless authentication
         }, 2000);
     };
 
     const handlePhoneSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        alert("Phone Login is currently unavailable. Please use Email Login.");
+        alert("Phone Login is currently unavailable. Please use the Email login option.");
     };
 
     const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -43,7 +43,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
         try {
             if (isSignUp) {
-                // Register
+                console.log("📝 Attempting registration...");
                 await register({
                     email,
                     password,
@@ -52,20 +52,33 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                     gender: 'Other',
                     location: 'Unknown'
                 });
-                // Auto login after register
-                const token = await login({ email, password });
-                console.log("💾 Register successful, saving token to localStorage:", token.access_token);
+                console.log("✅ Registration successful");
+            }
+
+            console.log("🔑 Attempting login...");
+            const token = await login({ email, password });
+
+            if (token && token.access_token) {
+                console.log("💾 AUTH SUCCESS: Saving token to localStorage");
                 localStorage.setItem('token', token.access_token);
-                onLogin();
+
+                // Sanity check
+                const savedToken = localStorage.getItem('token');
+                if (savedToken) {
+                    console.log("✅ Token verified in localStorage");
+                    onLogin();
+                } else {
+                    console.error("❌ Failed to save token to localStorage");
+                    setError("Critical Error: Browser refused to save credentials. Please check your privacy settings or use a different browser.");
+                    setIsLoading(false);
+                }
             } else {
-                // Login
-                const token = await login({ email, password });
-                console.log("💾 Login successful, saving token to localStorage:", token.access_token);
-                localStorage.setItem('token', token.access_token);
-                onLogin();
+                console.error("❌ Token response missing access_token");
+                setError("Login failed: Backend did not return a valid session.");
+                setIsLoading(false);
             }
         } catch (err: any) {
-            console.error("Auth Error:", err);
+            console.error("🔥 Auth Error:", err);
             setError(isSignUp ? "Registration failed. Email might be taken." : "Login failed. Check your credentials.");
             setIsLoading(false);
         }

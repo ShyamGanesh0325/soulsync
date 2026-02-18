@@ -55,17 +55,20 @@ export const register = async (user: UserCreate): Promise<any> => {
 
 export const login = async (credentials: UserLogin): Promise<Token> => {
     try {
-        const formData = new FormData();
-        formData.append('username', credentials.email);
-        formData.append('password', credentials.password);
+        console.log("🔑 API: Attempting login for", credentials.email);
+        const params = new URLSearchParams();
+        params.append('username', credentials.email);
+        params.append('password', credentials.password);
 
-        // For login, we don't send default JSON header because it's form data
-        const response = await api.post<Token>('/auth/login', formData, {
-            headers: { 'Content-Type': 'multipart/form-data' }
+        // OAuth2PasswordRequestForm in FastAPI expects application/x-www-form-urlencoded
+        const response = await api.post<Token>('/auth/login', params, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
+
+        console.log("✅ API: Login successful, received token");
         return response.data;
-    } catch (error) {
-        console.error("Login error:", error);
+    } catch (error: any) {
+        console.error("❌ API: Login error:", error.response?.data || error.message);
         throw error;
     }
 };
