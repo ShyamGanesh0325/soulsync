@@ -87,37 +87,6 @@ MOCK_MATCHES = [
     }
 ]
 
-# Bot responses based on interests
-BOT_RESPONSES = {
-    "match_1": [
-        "I'd love to hear about your favorite travel destination! 🌍",
-        "What kind of music are you into lately?",
-        "Coffee date sometime? I know a great spot ☕"
-    ],
-    "match_2": [
-        "Do you play any multiplayer games? We should team up! 🎮",
-        "What's your workout routine like?",
-        "My dog would love to meet you haha 🐕"
-    ],
-    "match_3": [
-        "What book are you reading right now? I need recommendations 📖",
-        "I'm more of a night person too! When's your usual bedtime?",
-        "Let's have a deep convo about life and existence 🌌"
-    ],
-    "bot_luna": [
-        "That's a very empathic way to put it! How does that make you feel? ✨",
-        "I love that frequency! Try expressing more of your 'Grounded' side next time. 💫",
-        "Deep connections start with vulnerability. You're doing great! 🌙",
-        "Your emotional resonance is peaking! Ask me about my favorite vibe."
-    ],
-    "bot_atlas": [
-        "Solid icebreaker! But we can make it sharper. Try adding a bit of 'Electric' energy! ⚡",
-        "Haha, nice one! Charisma is all about timing. What's your next move? 😉",
-        "That's high-energy! Remember to keep the vibe synchronized with your soulmate. 🚀",
-        "Let's test your wit! If I said 'The stars are aligned', how would you respond?"
-    ]
-}
-
 class MessagePayload(BaseModel):
     match_id: str
     text: str
