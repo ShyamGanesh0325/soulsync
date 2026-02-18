@@ -11,11 +11,11 @@ from app.models.user import User
 import os
 
 # Secret key for signing JWTs (should be in env variables for production)
-SECRET_KEY = os.getenv("SECRET_KEY", "soulsync_super_secret_key_change_me_in_prod")
+SECRET_KEY = os.getenv("SECRET_KEY", "soulsync_super_secret_key_2026")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 300
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 
 def verify_password(plain_password, hashed_password):
     # bcrypt requires bytes
@@ -39,21 +39,22 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
+        print(f"DEBUG AUTH: Decoding token... (SECRET_KEY start: {SECRET_KEY[:4]}...)")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
         if email is None:
+            print("DEBUG AUTH: Token payload missing 'sub' (email)")
             raise credentials_exception
-    except JWTError:
+        print(f"DEBUG AUTH: Token decoded successfully for {email}")
+    except JWTError as e:
+        print(f"DEBUG AUTH: JWT Decoding Error: {str(e)}")
         raise credentials_exception
     
     user = db.query(User).filter(User.email == email).first()
     if user is None:
+        print(f"DEBUG AUTH: User {email} not found in database")
         raise credentials_exception
+    
+    print(f"DEBUG AUTH: User {email} authenticated successfully")
     return user

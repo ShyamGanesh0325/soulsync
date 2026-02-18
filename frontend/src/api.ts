@@ -29,17 +29,29 @@ export interface Token {
     token_type: string;
 }
 
-// Axios Interceptor for Auth
+// Axios Interceptor for Auth (Requests)
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
-        console.log("🔑 API Request: Attaching authorization token");
         config.headers.set('Authorization', `Bearer ${token}`);
-    } else {
-        console.warn("⚠️ API Warning: No token found in localStorage for request:", config.url);
     }
     return config;
 }, (error) => {
+    return Promise.reject(error);
+});
+
+// Axios Interceptor for Auth (Responses)
+api.interceptors.response.use((response) => {
+    return response;
+}, (error) => {
+    if (error.response && error.response.status === 401) {
+        console.error("⛔ AUTH ERROR: Unauthorized (401). Clearing token...");
+        localStorage.removeItem('token');
+        // Optional: Force reload to trigger redirect to login if app state depends on token
+        if (!window.location.pathname.includes('/login')) {
+            window.location.href = '/';
+        }
+    }
     return Promise.reject(error);
 });
 
