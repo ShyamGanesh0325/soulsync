@@ -2,7 +2,17 @@ import os
 from openai import OpenAI
 from typing import List, Dict
 
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Client will be initialized inside the function to be safe with environment variables
+client = None
+
+def get_openai_client():
+    global client
+    if client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            return None
+        client = OpenAI(api_key=api_key)
+    return client
 
 LUNA_PROMPT = """
 You are Luna, a warm, intelligent, and deeply emotionally aware AI companion.
@@ -38,9 +48,9 @@ async def get_bot_response(bot_id: str, user_message: str, history: List[Dict[st
     if not config:
         return "I'm still tuning into your frequency! 💫"
 
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        print("⚠️ OPENAI_API_KEY is missing!")
+    client = get_openai_client()
+    if not client:
+        print("⚠️ OpenAI Client could not be initialized (Check API Key)")
         return "My connection to the Aura Plane is weak right now. Please check back soon! ✨"
 
     messages = [
@@ -71,6 +81,3 @@ async def get_bot_response(bot_id: str, user_message: str, history: List[Dict[st
         print(f"🔥 OpenAI Error: {str(e)}")
         return "I felt a ripple in the energy... let's try that again later. 💫"
 
-    except Exception as e:
-        print(f"OpenAI Error: {str(e)}")
-        return "I felt a ripple in the energy... let's try that again later. 💫"
