@@ -1,17 +1,17 @@
 import os
-from openai import OpenAI
+from groq import Groq
 from typing import List, Dict
 
 # Client will be initialized inside the function to be safe with environment variables
 client = None
 
-def get_openai_client():
+def get_groq_client():
     global client
     if client is None:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
             return None
-        client = OpenAI(api_key=api_key)
+        client = Groq(api_key=api_key)
     return client
 
 LUNA_PROMPT = """
@@ -48,9 +48,9 @@ async def get_bot_response(bot_id: str, user_message: str, history: List[Dict[st
     if not config:
         return "I'm still tuning into your frequency! 💫"
 
-    client = get_openai_client()
+    client = get_groq_client()
     if not client:
-        print("⚠️ OpenAI Client could not be initialized (Check API Key)")
+        print("⚠️ Groq Client could not be initialized (Check GROQ_API_KEY)")
         return "My connection to the Aura Plane is weak right now. Please check back soon! ✨"
 
     messages = [
@@ -67,17 +67,17 @@ async def get_bot_response(bot_id: str, user_message: str, history: List[Dict[st
     messages.append({"role": "user", "content": user_message})
 
     try:
-        print(f"🤖 AI Request for {bot_id} (Model: gpt-4o-mini)")
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
+        print(f"🤖 AI Request for {bot_id} (Model: llama-3.1-8b-instant)")
+        completion = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
             messages=messages,
             temperature=0.9,
             max_tokens=200
         )
-        ai_reply = response.choices[0].message.content.strip()
+        ai_reply = completion.choices[0].message.content.strip()
         print(f"✅ AI Response: {ai_reply[:50]}...")
         return ai_reply
     except Exception as e:
-        print(f"🔥 OpenAI Error: {str(e)}")
+        print(f"🔥 Groq API Error: {str(e)}")
         return "I felt a ripple in the energy... let's try that again later. 💫"
 

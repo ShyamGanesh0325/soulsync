@@ -16,4 +16,4 @@ gunicorn
 better_profanity
 textblob
 joblib
-openai
+groq
