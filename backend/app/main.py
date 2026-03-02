@@ -12,16 +12,25 @@ app = FastAPI(title="SoulSync API", version="1.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://soulsync-omega-sepia.vercel.app",
-        "https://soulsync-free.vercel.app",
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],  # For testing, we can use * if allow_credentials is False
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Alternative if they NEED credentials (less likely for JWT):
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=[
+#         "https://soulsync-omega-sepia.vercel.app",
+#         "https://soulsync-free.vercel.app",
+#         "https://soulsync-ultimate.vercel.app",
+#         "http://localhost:3000",
+#     ],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 app.include_router(auth.router, prefix="/api/auth", tags=["Auth"])
 app.include_router(predict.router, prefix="/api", tags=["Predict"])
