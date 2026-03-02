@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Moon, Sun, Bell, BellOff, Shield, Sparkles, Save, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { getCurrentUser, updateCurrentUser, type UserResponse } from '../api';
+import { getCurrentUser, type UserResponse } from '../api';
+import { updateFullProfile } from '../services/profileService';
 
 interface SettingsProps {
     isOpen: boolean;
@@ -42,72 +43,13 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout, onUpdate
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Hard-Reset: Fetch latest profile to ensure no fields are missing
-            const user = await getCurrentUser();
-
-            // Bulletproof: Force explicit types and defaults for every field
-            const finalPayload = {
-                // Basic Info
-                name: user?.name || "User",
-                age: Number(user?.age || 18),
-                gender: user?.gender || "Other",
-                location: user?.location || "Unknown",
-
-                // Personality (Must be Numbers)
-                openness: Number(user?.openness ?? 5),
-                extroversion: Number(user?.extroversion ?? 5),
-                agreeableness: Number(user?.agreeableness ?? 5),
-                neuroticism: Number(user?.neuroticism ?? 5),
-                conscientiousness: Number(user?.conscientiousness ?? 5),
-
-                // Love Languages (Must be Numbers)
-                words_of_affirmation: Number(user?.words_of_affirmation ?? 0),
-                quality_time: Number(user?.quality_time ?? 0),
-                gifts: Number(user?.gifts ?? 0),
-                physical_touch: Number(user?.physical_touch ?? 0),
-                acts_of_service: Number(user?.acts_of_service ?? 0),
-
-                // Interests (Must be Numbers/0 or 1)
-                likes_music: Number(user?.likes_music ?? 0),
-                likes_travel: Number(user?.likes_travel ?? 0),
-                likes_pets: Number(user?.likes_pets ?? 0),
-                foodie: Number(user?.foodie ?? 0),
-                gym_person: Number(user?.gym_person ?? 0),
-                movie_lover: Number(user?.movie_lover ?? 0),
-                gamer: Number(user?.gamer ?? 0),
-                reader: Number(user?.reader ?? 0),
-                night_owl: Number(user?.night_owl ?? 0),
-                early_bird: Number(user?.early_bird ?? 0),
-
-                // Strings
-                zodiac_sign: user?.zodiac_sign || "Unknown",
-                relationship_goal: user?.relationship_goal || "Unknown",
-                fav_music_genre: user?.fav_music_genre || "Unknown",
-                bio_text: user?.bio_text || "No bio yet",
-
-                // Keep existing filters
-                max_distance: Number(user?.max_distance ?? 50),
-                min_age_pref: Number(user?.min_age_pref ?? 18),
-                max_age_pref: Number(user?.max_age_pref ?? 100),
-
-                // Arrays & Booleans (Crucial for PUT requests)
-                photos: user?.photos || [],
+            // Use the centralized Bulletproof service
+            const updatedUser = await updateFullProfile(fullUser, {
                 notifications_enabled: Boolean(notifications),
-                safe_mode_enabled: Boolean(safeMode),
+                safe_mode_enabled: Boolean(safeMode)
+            });
 
-                // Optional fields
-                jobTitle: user?.jobTitle,
-                school: user?.school,
-                height: user?.height ? Number(user.height) : undefined,
-                loveLanguage: user?.loveLanguage,
-                aura: user?.aura,
-                lifestyle: user?.lifestyle
-            } as UserResponse;
-
-            console.log("Bulletproof Payload Check - Final Payload:", finalPayload);
-
-            await updateCurrentUser(finalPayload);
-            if (onUpdate) onUpdate(finalPayload);
+            if (onUpdate) onUpdate(updatedUser);
             onClose();
         } catch (err: any) {
             console.error("STILL FAILING. Server response:", err.response?.data);
