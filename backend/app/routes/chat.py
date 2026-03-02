@@ -25,7 +25,9 @@ MOCK_MATCHES = [
         "jobTitle": "UX Designer",
         "aura": "Vibrant",
         "lifestyle": {"smoking": "Never", "drinking": "Socially", "fitness": "Sometimes"},
-        "height": 165
+        "height": 165,
+        "traits": {"openness": 9, "extroversion": 7, "agreeableness": 8, "neuroticism": 4, "conscientiousness": 7},
+        "goal": "Long-term"
     },
     {
         "id": "match_2",
@@ -39,7 +41,9 @@ MOCK_MATCHES = [
         "jobTitle": "Software Engineer",
         "aura": "Grounded",
         "lifestyle": {"smoking": "Never", "drinking": "Never", "fitness": "Daily"},
-        "height": 182
+        "height": 182,
+        "traits": {"openness": 5, "extroversion": 4, "agreeableness": 6, "neuroticism": 3, "conscientiousness": 9},
+        "goal": "Casual"
     },
     {
         "id": "match_3",
@@ -53,7 +57,9 @@ MOCK_MATCHES = [
         "jobTitle": "Publishing Editor",
         "aura": "Ethereal",
         "lifestyle": {"smoking": "Never", "drinking": "Socially", "fitness": "Rarely"},
-        "height": 170
+        "height": 170,
+        "traits": {"openness": 8, "extroversion": 3, "agreeableness": 9, "neuroticism": 5, "conscientiousness": 6},
+        "goal": "Long-term"
     },
     {
         "id": "bot_luna",

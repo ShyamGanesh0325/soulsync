@@ -38,12 +38,12 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
 
                     {/* Settings Panel */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-md"
+                        initial={{ opacity: 0, scale: 0.95, x: "-50%", y: "-40%" }}
+                        animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+                        exit={{ opacity: 0, scale: 0.95, x: "-50%", y: "-40%" }}
+                        className="fixed top-1/2 left-1/2 z-50 w-full max-w-md"
                     >
-                        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 text-left">
                             {/* Header */}
                             <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-6 relative">
                                 <button
@@ -200,7 +200,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
                     </motion.div>
                 </>
             )}
-        </AnimatePresence>
+        </AnimatePresence >
     );
 };
 

@@ -6,7 +6,23 @@ import api from '@/lib/api';
 interface User {
     id: number;
     email: string;
-    full_name?: string;
+    full_name: string;
+    age?: number;
+    gender?: string;
+    location?: string;
+    openness?: number;
+    extroversion?: number;
+    agreeableness?: number;
+    neuroticism?: number;
+    conscientiousness?: number;
+    likes_music?: boolean;
+    likes_travel?: boolean;
+    likes_pets?: boolean;
+    foodie?: boolean;
+    gym_person?: boolean;
+    gamer?: boolean;
+    reader?: boolean;
+    night_owl?: boolean;
 }
 
 interface AuthContextType {

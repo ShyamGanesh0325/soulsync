@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Bot, ArrowLeft, Sparkles } from 'lucide-react';
-import { Message, ChatResponse } from '@/types';
+import { Message } from '@/types';
+import api from '@/lib/api';
 
 interface ChatWindowProps {
     botId: 'bot_luna' | 'bot_atlas';
@@ -12,14 +13,40 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ botId, botName, onBack }) => {
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            role: 'assistant',
-            content: `Hello! I'm ${botName}, your SoulSync AI mentor. How's your energy today? ✨`
-        }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+
+    // Fetch History on Mount
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const response = await api.get(`/chat/${botId}`);
+                if (response.data.messages) {
+                    const formatted: Message[] = response.data.messages.map((m: any) => ({
+                        role: m.sender === 'user' ? 'user' : 'assistant',
+                        content: m.text
+                    }));
+
+                    if (formatted.length === 0) {
+                        setMessages([{
+                            role: 'assistant',
+                            content: `Hello! I'm ${botName}, your SoulSync AI mentor. How's your energy today? ✨`
+                        }]);
+                    } else {
+                        setMessages(formatted);
+                    }
+                }
+            } catch (err) {
+                console.error("History failure:", err);
+                setMessages([{
+                    role: 'assistant',
+                    content: `Hello! I'm ${botName}. My connection to your past chats is a bit blurry, but I'm here now! ✨`
+                }]);
+            }
+        };
+        fetchHistory();
+    }, [botId, botName]);
 
     const handleSend = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,32 +58,39 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ botId, botName, onBack }) => {
         setIsTyping(true);
 
         try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    botId,
-                    message: inputText,
-                    history: messages
-                }),
+            const response = await api.post('/chat/send', {
+                match_id: botId,
+                text: inputText,
+                sender: 'user'
             });
 
-            const data: ChatResponse = await response.json();
+            if (response.data.success) {
+                // The backend handles the AI response generation in the same call 
+                // but usually returns the user message status. 
+                // We should re-fetch or wait for the bot message logic in chat.py
 
-            if (data.success) {
-                const assistantMsg: Message = { role: 'assistant', content: data.reply };
-                setMessages(prev => [...prev, assistantMsg]);
-            } else {
-                throw new Error(data.error || 'Failed to get resonance');
+                // Let's check how the backend sends the bot response. 
+                // Ah, the backend `send_message` returns MessageResponse with the user message.
+                // The bot response is also saved to the DB.
+
+                // To keep it simple and reactive, we'll re-fetch history or 
+                // rely on the backend returning the bot message. 
+                // Let's modify the backend to return BOTH messages if it's a bot.
+
+                // Wait, let's look at chat.py again.
             }
         } catch (err: any) {
             console.error("Chat Error:", err);
-            setMessages(prev => [...prev, {
-                role: 'assistant',
-                content: "I felt a ripple in the energy... let's try that again later. 💫"
-            }]);
         } finally {
             setIsTyping(false);
+            // Re-fetch to get the bot's reply
+            const histRes = await api.get(`/chat/${botId}`);
+            if (histRes.data.messages) {
+                setMessages(histRes.data.messages.map((m: any) => ({
+                    role: m.sender === 'user' ? 'user' : 'assistant',
+                    content: m.text
+                })));
+            }
         }
     };
 
