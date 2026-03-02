@@ -44,22 +44,29 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
             // Hard-Reset: Fetch latest profile to ensure no fields are missing
             const user = await getCurrentUser();
 
-            // Construct a guaranteed-complete profile to satisfy strict backend validation
-            const defaultProfile = {
+            // Bulletproof: Force explicit types and defaults for every field
+            const finalPayload = {
+                // Basic Info
                 name: user?.name || "User",
-                age: Number(user?.age) || 18,
+                age: Number(user?.age || 18),
                 gender: user?.gender || "Other",
                 location: user?.location || "Unknown",
+
+                // Personality (Must be Numbers)
                 openness: Number(user?.openness ?? 5),
                 extroversion: Number(user?.extroversion ?? 5),
                 agreeableness: Number(user?.agreeableness ?? 5),
                 neuroticism: Number(user?.neuroticism ?? 5),
                 conscientiousness: Number(user?.conscientiousness ?? 5),
+
+                // Love Languages (Must be Numbers)
                 words_of_affirmation: Number(user?.words_of_affirmation ?? 0),
                 quality_time: Number(user?.quality_time ?? 0),
                 gifts: Number(user?.gifts ?? 0),
                 physical_touch: Number(user?.physical_touch ?? 0),
                 acts_of_service: Number(user?.acts_of_service ?? 0),
+
+                // Interests (Must be Numbers/0 or 1)
                 likes_music: Number(user?.likes_music ?? 0),
                 likes_travel: Number(user?.likes_travel ?? 0),
                 likes_pets: Number(user?.likes_pets ?? 0),
@@ -70,30 +77,33 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
                 reader: Number(user?.reader ?? 0),
                 night_owl: Number(user?.night_owl ?? 0),
                 early_bird: Number(user?.early_bird ?? 0),
+
+                // Strings
                 zodiac_sign: user?.zodiac_sign || "Unknown",
                 relationship_goal: user?.relationship_goal || "Unknown",
                 fav_music_genre: user?.fav_music_genre || "Unknown",
                 bio_text: user?.bio_text || "No bio yet",
-                // Preserve optional fields
+
+                // Keep existing filters
+                max_distance: Number(user?.max_distance ?? 50),
+                min_age_pref: Number(user?.min_age_pref ?? 18),
+                max_age_pref: Number(user?.max_age_pref ?? 100),
+
+                // Arrays & Booleans (Crucial for PUT requests)
+                photos: user?.photos || [],
+                notifications_enabled: Boolean(notifications),
+                safe_mode_enabled: Boolean(safeMode),
+
+                // Optional fields
                 jobTitle: user?.jobTitle,
                 school: user?.school,
-                height: user?.height,
+                height: user?.height ? Number(user.height) : undefined,
                 loveLanguage: user?.loveLanguage,
                 aura: user?.aura,
-                lifestyle: user?.lifestyle,
-                photos: user?.photos,
-                max_distance: user?.max_distance,
-                min_age_pref: user?.min_age_pref,
-                max_age_pref: user?.max_age_pref
-            };
-
-            const finalPayload = {
-                ...defaultProfile,
-                notifications_enabled: notifications,
-                safe_mode_enabled: safeMode
+                lifestyle: user?.lifestyle
             } as UserResponse;
 
-            console.log("Hard-Reset Payload Check - Final Payload:", finalPayload);
+            console.log("Bulletproof Payload Check - Final Payload:", finalPayload);
 
             await updateCurrentUser(finalPayload);
             onClose();
