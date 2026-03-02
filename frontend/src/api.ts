@@ -1,5 +1,6 @@
 import axios from 'axios';
-import type { UserProfile, PredictionResponse } from './types';
+import type { UserProfile, PredictionResponse, UserResponse } from './types';
+export type { UserProfile, PredictionResponse, UserResponse };
 
 export const API_URL = 'https://soulsync-erxq.onrender.com/api';
 
@@ -47,7 +48,6 @@ api.interceptors.response.use((response) => {
     if (error.response && error.response.status === 401) {
         console.error("⛔ AUTH ERROR: Unauthorized (401). Clearing token...");
         localStorage.removeItem('token');
-        // Optional: Force reload to trigger redirect to login if app state depends on token
         if (!window.location.pathname.includes('/login')) {
             window.location.href = '/';
         }
@@ -72,7 +72,6 @@ export const login = async (credentials: UserLogin): Promise<Token> => {
         params.append('username', credentials.email);
         params.append('password', credentials.password);
 
-        // OAuth2PasswordRequestForm in FastAPI expects application/x-www-form-urlencoded
         const response = await api.post<Token>('/auth/login', params, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         });
@@ -133,17 +132,6 @@ export const sendMessage = async (matchId: string, text: string): Promise<Messag
         throw error;
     }
 };
-
-export interface UserResponse extends UserProfile {
-    id: number;
-    email: string;
-    full_name: string;
-    notifications_enabled?: boolean;
-    safe_mode_enabled?: boolean;
-    max_distance?: number;
-    min_age_pref?: number;
-    max_age_pref?: number;
-}
 
 export const getCurrentUser = async (): Promise<UserResponse> => {
     try {
