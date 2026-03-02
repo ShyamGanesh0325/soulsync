@@ -41,24 +41,66 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            // Nuclear Fix: Fetch latest profile right before saving
-            const currentProfile = await getCurrentUser();
+            // Hard-Reset: Fetch latest profile to ensure no fields are missing
+            const user = await getCurrentUser();
 
-            const payload = {
-                ...currentProfile,
+            // Construct a guaranteed-complete profile to satisfy strict backend validation
+            const defaultProfile = {
+                name: user?.name || "User",
+                age: Number(user?.age) || 18,
+                gender: user?.gender || "Other",
+                location: user?.location || "Unknown",
+                openness: Number(user?.openness ?? 5),
+                extroversion: Number(user?.extroversion ?? 5),
+                agreeableness: Number(user?.agreeableness ?? 5),
+                neuroticism: Number(user?.neuroticism ?? 5),
+                conscientiousness: Number(user?.conscientiousness ?? 5),
+                words_of_affirmation: Number(user?.words_of_affirmation ?? 0),
+                quality_time: Number(user?.quality_time ?? 0),
+                gifts: Number(user?.gifts ?? 0),
+                physical_touch: Number(user?.physical_touch ?? 0),
+                acts_of_service: Number(user?.acts_of_service ?? 0),
+                likes_music: Number(user?.likes_music ?? 0),
+                likes_travel: Number(user?.likes_travel ?? 0),
+                likes_pets: Number(user?.likes_pets ?? 0),
+                foodie: Number(user?.foodie ?? 0),
+                gym_person: Number(user?.gym_person ?? 0),
+                movie_lover: Number(user?.movie_lover ?? 0),
+                gamer: Number(user?.gamer ?? 0),
+                reader: Number(user?.reader ?? 0),
+                night_owl: Number(user?.night_owl ?? 0),
+                early_bird: Number(user?.early_bird ?? 0),
+                zodiac_sign: user?.zodiac_sign || "Unknown",
+                relationship_goal: user?.relationship_goal || "Unknown",
+                fav_music_genre: user?.fav_music_genre || "Unknown",
+                bio_text: user?.bio_text || "No bio yet",
+                // Preserve optional fields
+                jobTitle: user?.jobTitle,
+                school: user?.school,
+                height: user?.height,
+                loveLanguage: user?.loveLanguage,
+                aura: user?.aura,
+                lifestyle: user?.lifestyle,
+                photos: user?.photos,
+                max_distance: user?.max_distance,
+                min_age_pref: user?.min_age_pref,
+                max_age_pref: user?.max_age_pref
+            };
+
+            const finalPayload = {
+                ...defaultProfile,
                 notifications_enabled: notifications,
                 safe_mode_enabled: safeMode
             } as UserResponse;
 
-            console.log("Nuclear Payload - User State:", currentProfile);
-            console.log("Nuclear Payload - Final Payload:", payload);
+            console.log("Hard-Reset Payload Check - Final Payload:", finalPayload);
 
-            await updateCurrentUser(payload);
+            await updateCurrentUser(finalPayload);
             onClose();
         } catch (err: any) {
+            console.error("STILL FAILING. Server response:", err.response?.data);
             console.error("Payload sent causing error:", err.config?.data);
-            console.error("Server response error:", err.response?.data);
-            alert("Failed to save changes. Check console for details.");
+            alert("Failed to save changes. Check console for error details.");
         } finally {
             setSaving(false);
         }
