@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Moon, Sun, Bell, BellOff, Shield, Sparkles, MapPin, Users, Filter, Save, Loader2 } from 'lucide-react';
+import { X, Moon, Sun, Bell, BellOff, Shield, Sparkles, Save, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 import { getCurrentUser, updateCurrentUser } from '../api';
 
@@ -16,8 +16,6 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
     const { theme, toggleTheme } = useTheme();
     const [notifications, setNotifications] = useState(true);
     const [safeMode, setSafeMode] = useState(true);
-    const [distance, setDistance] = useState(50);
-    const [ageRange, setAgeRange] = useState<[number, number]>([18, 35]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
 
@@ -30,8 +28,6 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
                     const user = await getCurrentUser();
                     setNotifications(user.notifications_enabled ?? true);
                     setSafeMode(user.safe_mode_enabled ?? true);
-                    setDistance(user.max_distance ?? 50);
-                    setAgeRange([user.min_age_pref ?? 18, user.max_age_pref ?? 35]);
                 } catch (err) {
                     console.error("Failed to fetch settings:", err);
                 } finally {
@@ -47,10 +43,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
         try {
             await updateCurrentUser({
                 notifications_enabled: notifications,
-                safe_mode_enabled: safeMode,
-                max_distance: distance,
-                min_age_pref: ageRange[0],
-                max_age_pref: ageRange[1]
+                safe_mode_enabled: safeMode
             });
             onClose();
         } catch (err) {
@@ -76,7 +69,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 text-left"
                     />
 
                     {/* Settings Panel Wrapper */}
@@ -179,56 +172,6 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
                                                             }`}
                                                     />
                                                 </button>
-                                            </div>
-
-                                            {/* Discovery Section */}
-                                            <div className="pt-4 border-t border-gray-100 dark:border-gray-800 space-y-6">
-                                                <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                                    <Filter size={14} /> Discovery Settings
-                                                </h3>
-
-                                                {/* Distance */}
-                                                <div className="space-y-2">
-                                                    <div className="flex justify-between items-center text-sm font-bold">
-                                                        <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                            <MapPin size={16} /> Maximum Distance
-                                                        </span>
-                                                        <span className="text-primary">{distance}km</span>
-                                                    </div>
-                                                    <input
-                                                        type="range"
-                                                        min="2" max="160"
-                                                        value={distance}
-                                                        onChange={(e) => setDistance(Number(e.target.value))}
-                                                        className="w-full accent-primary h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer"
-                                                    />
-                                                </div>
-
-                                                {/* Age Range */}
-                                                <div className="space-y-4">
-                                                    <div className="flex justify-between items-center text-sm font-bold">
-                                                        <span className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                                            <Users size={16} /> Age Range
-                                                        </span>
-                                                        <span className="text-primary">{ageRange[0]} - {ageRange[1]}</span>
-                                                    </div>
-                                                    <div className="flex gap-4">
-                                                        <input
-                                                            type="range"
-                                                            min="18" max="100"
-                                                            value={ageRange[0]}
-                                                            onChange={(e) => setAgeRange([Number(e.target.value), ageRange[1]])}
-                                                            className="w-full accent-primary h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer"
-                                                        />
-                                                        <input
-                                                            type="range"
-                                                            min="18" max="100"
-                                                            value={ageRange[1]}
-                                                            onChange={(e) => setAgeRange([ageRange[0], Number(e.target.value)])}
-                                                            className="w-full accent-primary h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer"
-                                                        />
-                                                    </div>
-                                                </div>
                                             </div>
 
                                             {/* Actions Section */}
