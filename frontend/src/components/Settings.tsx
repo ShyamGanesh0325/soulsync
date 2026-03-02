@@ -41,18 +41,24 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Nuclear Fix: Fetch latest profile right before saving
+            const currentProfile = await getCurrentUser();
+
             const payload = {
-                ...(fullUser || {}),
+                ...currentProfile,
                 notifications_enabled: notifications,
                 safe_mode_enabled: safeMode
             } as UserResponse;
 
-            console.log("Payload being sent to /auth/me:", payload);
+            console.log("Nuclear Payload - User State:", currentProfile);
+            console.log("Nuclear Payload - Final Payload:", payload);
+
             await updateCurrentUser(payload);
             onClose();
-        } catch (err) {
-            console.error("Failed to save settings:", err);
-            alert("Failed to save changes. Please try again.");
+        } catch (err: any) {
+            console.error("Payload sent causing error:", err.config?.data);
+            console.error("Server response error:", err.response?.data);
+            alert("Failed to save changes. Check console for details.");
         } finally {
             setSaving(false);
         }

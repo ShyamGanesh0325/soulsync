@@ -38,19 +38,25 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
     const handleSave = async () => {
         setSaving(true);
         try {
+            // Nuclear Fix: Fetch latest profile right before saving
+            const currentProfile = await getCurrentUser();
+
             const payload = {
-                ...(fullUser || {}),
-                max_distance: distance,
-                min_age_pref: ageRange[0],
-                max_age_pref: ageRange[1]
+                ...currentProfile,
+                max_distance: Number(distance),
+                min_age_pref: Number(ageRange[0]),
+                max_age_pref: Number(ageRange[1])
             } as UserResponse;
 
-            console.log("Payload being sent to /auth/me:", payload);
+            console.log("Nuclear Payload - User State:", currentProfile);
+            console.log("Nuclear Payload - Final Payload:", payload);
+
             await updateCurrentUser(payload);
             onClose();
-        } catch (err) {
-            console.error("Failed to save filters:", err);
-            alert("Failed to save changes. Please try again.");
+        } catch (err: any) {
+            console.error("Payload sent causing error:", err.config?.data);
+            console.error("Server response error:", err.response?.data);
+            alert("Failed to save changes. Check console for details.");
         } finally {
             setSaving(false);
         }
