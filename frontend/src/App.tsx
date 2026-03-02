@@ -149,37 +149,25 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-white dark:from-gray-900 dark:to-gray-800 font-sans text-gray-900 dark:text-white transition-colors duration-300">
 
-      {/* Action Buttons - only show if logged in and not in swipe/chat */}
+      {/* Action Buttons - fixed top-right */}
       {isLoggedIn && currentView !== 'swipe' && currentView !== 'chat' && (
-        <div className="fixed top-6 right-6 z-40 flex gap-4">
+        <div className="fixed top-6 right-6 z-[60] flex gap-4">
           <button
             onClick={() => setFiltersOpen(true)}
-            className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700 pointer-events-auto"
             title="Discovery Filters"
           >
             <Filter className="text-gray-700 dark:text-gray-300" size={24} />
           </button>
           <button
             onClick={() => setSettingsOpen(true)}
-            className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700"
+            className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700 pointer-events-auto"
             title="Settings"
           >
             <SettingsIcon className="text-gray-700 dark:text-gray-300" size={24} />
           </button>
         </div>
       )}
-
-      {/* Modals */}
-      <Settings
-        isOpen={settingsOpen}
-        onClose={() => setSettingsOpen(false)}
-        onLogout={handleLogout}
-      />
-
-      <Filters
-        isOpen={filtersOpen}
-        onClose={() => setFiltersOpen(false)}
-      />
 
       <AnimatePresence>
         {loading && <LoadingOverlay message="Syncing Souls..." />}
@@ -286,6 +274,21 @@ function App() {
               setCurrentView('chat');
               setMatchToCelebrate(null);
             }}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="wait">
+        {settingsOpen && (
+          <Settings
+            isOpen={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
+            onLogout={handleLogout}
+          />
+        )}
+        {filtersOpen && (
+          <Filters
+            isOpen={filtersOpen}
+            onClose={() => setFiltersOpen(false)}
           />
         )}
       </AnimatePresence>

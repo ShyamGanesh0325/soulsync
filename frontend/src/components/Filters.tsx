@@ -1,4 +1,4 @@
-'use client';
+
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -62,11 +62,12 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={onClose}
-                        className="fixed inset-0 bg-black/60 backdrop-blur-md z-[60]"
+                        className="fixed inset-0 bg-black/60 backdrop-blur-md z-[9999]"
                     />
 
                     {/* Filters Panel Wrapper */}
-                    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 pointer-events-none">
+                    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 pointer-events-none">
+                        原则:
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
