@@ -149,4 +149,13 @@ export const getCurrentUser = async (): Promise<UserResponse> => {
     }
 };
 
+export const updateCurrentUser = async (userData: Partial<UserResponse>): Promise<UserResponse> => {
+    try {
+        const response = await api.put<UserResponse>('/auth/me', userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export default api;

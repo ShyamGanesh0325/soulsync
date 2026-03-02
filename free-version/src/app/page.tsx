@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowRight, Bot, ShieldCheck, LogOut, MessageSquare, Heart as HeartIcon, Globe } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Settings from '@/components/layout/Settings';
+import Filters from '@/components/layout/Filters';
 import Login from '@/components/auth/Login';
 import ChatWindow from '@/components/chat/ChatWindow';
 import AuraDashboard from '@/components/dashboard/AuraDashboard';
@@ -21,6 +22,7 @@ export default function Home() {
   const [chatMode, setChatMode] = useState<'select' | 'active'>('select');
   const [activeBot, setActiveBot] = useState<'bot_luna' | 'bot_atlas'>('bot_luna');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   if (loading) {
     return (
@@ -51,12 +53,18 @@ export default function Home() {
           if (tab === 'chat') setChatMode('select');
         }}
         onSettingsClick={() => setIsSettingsOpen(true)}
+        onFilterClick={() => setIsFiltersOpen(true)}
       />
 
       <Settings
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         onLogout={() => signOut()}
+      />
+
+      <Filters
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
       />
 
       {/* Decorative Background Circles */}

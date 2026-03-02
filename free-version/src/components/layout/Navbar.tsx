@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Heart, Sparkles, User, Settings as SettingsIcon } from 'lucide-react';
+import { Heart, Sparkles, User, Settings as SettingsIcon, Filter } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface NavbarProps {
@@ -10,9 +10,10 @@ interface NavbarProps {
     onTabChange: (tab: 'dashboard' | 'discover' | 'chat') => void;
     onSettingsClick?: () => void;
     onProfileClick?: () => void;
+    onFilterClick?: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, currentTab, onTabChange, onSettingsClick, onProfileClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, currentTab, onTabChange, onSettingsClick, onProfileClick, onFilterClick }) => {
     const tabs = [
         { id: 'dashboard', label: 'Dashboard', icon: <Sparkles size={18} /> },
         { id: 'discover', label: 'Discover', icon: <Heart size={18} /> },
@@ -63,6 +64,14 @@ const Navbar: React.FC<NavbarProps> = ({ isLoggedIn, currentTab, onTabChange, on
                                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 transition-colors"
                             >
                                 <User size={18} />
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={onFilterClick}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 transition-colors"
+                            >
+                                <Filter size={18} />
                             </motion.button>
                             <motion.button
                                 whileHover={{ scale: 1.05 }}

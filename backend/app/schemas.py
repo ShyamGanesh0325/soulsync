@@ -29,6 +29,13 @@ class UserCreate(BaseModel):
     neuroticism: float = 5.0
     conscientiousness: float = 5.0
     
+    # Settings Preferences
+    notifications_enabled: bool = True
+    safe_mode_enabled: bool = True
+    max_distance: int = 50
+    min_age_pref: int = 18
+    max_age_pref: int = 100
+    
     words_of_affirmation: int = 5
     quality_time: int = 5
     gifts: int = 5
@@ -89,6 +96,13 @@ class UserProfile(BaseModel):
     
     # Bio
     bio_text: str
+
+    # Settings Preferences
+    notifications_enabled: Optional[bool] = None
+    safe_mode_enabled: Optional[bool] = None
+    max_distance: Optional[int] = None
+    min_age_pref: Optional[int] = None
+    max_age_pref: Optional[int] = None
 
 class UserResponse(UserProfile):
     id: int

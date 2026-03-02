@@ -48,6 +48,13 @@ class User(Base):
     
     bio_text = Column(String, default="")
     
+    # Settings Preferences
+    notifications_enabled = Column(Boolean, default=True)
+    safe_mode_enabled = Column(Boolean, default=True)
+    max_distance = Column(Integer, default=50)
+    min_age_pref = Column(Integer, default=18)
+    max_age_pref = Column(Integer, default=100)
+    
     # Prediction Results (Stored for caching)
     last_login = Column(String, nullable=True)
 

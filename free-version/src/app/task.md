@@ -1,0 +1,26 @@
+# Task: Implement Advanced SoulSync Features
+
+- [x] Research and Planning <!-- id: 0 -->
+    - [x] Map out component architecture for Dashboard and Discovery <!-- id: 1 -->
+    - [x] Design backend schema updates for vibe stats <!-- id: 2 -->
+- [x] Backend Enhancements <!-- id: 3 -->
+    - [x] Update User model with vibez/stats fields <!-- id: 4 -->
+    - [x] Implement AI Resonance logic in API <!-- id: 5 -->
+    - [x] Add Ghosting/Safety score endpoints <!-- id: 6 -->
+- [x] Frontend: Aura Dashboard <!-- id: 7 -->
+    - [x] Create AuraDashboard component with vibe charts <!-- id: 8 -->
+    - [x] Integrate with backend vibe stats <!-- id: 9 -->
+- [x] Frontend: Guided Discovery Feed <!-- id: 10 -->
+    - [x] Build DiscoveryFeed with resonance cards <!-- id: 11 -->
+    - [x] Display AI-generated matching insights <!-- id: 12 -->
+- [x] Frontend: Ghost-Buster System <!-- id: 13 -->
+    - [x] Add safety scores and risk indicators to profiles <!-- id: 14 -->
+- [x] Final Polishing & Verification <!-- id: 15 -->
+    - [x] Verify tab navigation smoothness <!-- id: 16 -->
+    - [x] Confirm AI insights load for each match <!-- id: 17 -->
+    - [x] Test resonance sync feature <!-- id: 18 -->
+    - [x] Fix chat history and bot switching logic <!-- id: 19 -->
+    - [x] Fix Navbar floating island layout <!-- id: 20 -->
+    - [x] Fix Settings Modal centering (Local & Deployed) <!-- id: 21 -->
+    - [x] Implement Settings and Filter persistence logic <!-- id: 22 -->
+    - [x] Move Discovery filters to a dedicated Filter modal for better UX <!-- id: 23 -->
