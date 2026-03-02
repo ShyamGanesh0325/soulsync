@@ -39,6 +39,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
     try:
         print(f"DEBUG AUTH: Decoding token... (SECRET_KEY start: {SECRET_KEY[:4]}...)")
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
