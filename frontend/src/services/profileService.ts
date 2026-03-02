@@ -60,6 +60,13 @@ export const updateFullProfile = async (currentUser: UserResponse | null, update
         max_distance: Number(mergedData.max_distance ?? 50),
         min_age_pref: Number(mergedData.min_age_pref ?? 18),
         max_age_pref: Number(mergedData.max_age_pref ?? 100),
+        min_compatibility: Number(mergedData.min_compatibility ?? 0),
+        required_love_language: mergedData.required_love_language || "any",
+        min_openness: Number(mergedData.min_openness ?? 0),
+        min_extroversion: Number(mergedData.min_extroversion ?? 0),
+        min_agreeableness: Number(mergedData.min_agreeableness ?? 0),
+        min_neuroticism: Number(mergedData.min_neuroticism ?? 0),
+        min_conscientiousness: Number(mergedData.min_conscientiousness ?? 0),
 
         // Arrays & Booleans (Crucial for PUT requests)
         photos: mergedData.photos || [],

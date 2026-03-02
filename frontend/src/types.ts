@@ -43,6 +43,13 @@ export interface UserProfile {
     max_distance?: number;
     min_age_pref?: number;
     max_age_pref?: number;
+    min_compatibility?: number;
+    required_love_language?: string;
+    min_openness?: number;
+    min_extroversion?: number;
+    min_agreeableness?: number;
+    min_neuroticism?: number;
+    min_conscientiousness?: number;
 }
 
 export interface UserResponse extends UserProfile {

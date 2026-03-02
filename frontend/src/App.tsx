@@ -58,7 +58,7 @@ function App() {
         .then((user: UserResponse) => {
           setUserData(user);
           setIsLoggedIn(true);
-          loadMatches();
+          loadMatches(user);
           setCurrentView('input');
         })
         .catch(() => {
@@ -84,9 +84,21 @@ function App() {
   };
 
   // Load matches when needed
-  const loadMatches = async () => {
+  const loadMatches = async (userOverride?: UserProfile | null) => {
+    const user = userOverride || userData;
     try {
-      const response = await api.get('/matches');
+      const params = {
+        min_age: user?.min_age_pref,
+        max_age: user?.max_age_pref,
+        min_compatibility: user?.min_compatibility,
+        required_love_language: user?.required_love_language,
+        min_openness: user?.min_openness,
+        min_extroversion: user?.min_extroversion,
+        min_agreeableness: user?.min_agreeableness,
+        min_neuroticism: user?.min_neuroticism,
+        min_conscientiousness: user?.min_conscientiousness
+      };
+      const response = await api.get('/matches', { params });
       setMatches(response.data.matches || []);
     } catch (err) {
       console.error('Error loading matches:', err);
@@ -292,7 +304,7 @@ function App() {
             onClose={() => setFiltersOpen(false)}
             onUpdate={(updatedUser) => {
               setUserData(updatedUser);
-              loadMatches(); // Reload matches with new filter preferences
+              loadMatches(updatedUser); // Reload matches with new filter preferences
             }}
           />
         )}
