@@ -41,11 +41,14 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await updateCurrentUser({
+            const payload = {
                 ...(fullUser || {}),
                 notifications_enabled: notifications,
                 safe_mode_enabled: safeMode
-            } as UserResponse);
+            } as UserResponse;
+
+            console.log("Payload being sent to /auth/me:", payload);
+            await updateCurrentUser(payload);
             onClose();
         } catch (err) {
             console.error("Failed to save settings:", err);

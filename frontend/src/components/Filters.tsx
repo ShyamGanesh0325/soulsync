@@ -38,12 +38,15 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
     const handleSave = async () => {
         setSaving(true);
         try {
-            await updateCurrentUser({
+            const payload = {
                 ...(fullUser || {}),
                 max_distance: distance,
                 min_age_pref: ageRange[0],
                 max_age_pref: ageRange[1]
-            } as UserResponse);
+            } as UserResponse;
+
+            console.log("Payload being sent to /auth/me:", payload);
+            await updateCurrentUser(payload);
             onClose();
         } catch (err) {
             console.error("Failed to save filters:", err);
