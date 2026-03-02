@@ -7,16 +7,16 @@ import MatchList from './components/MatchList';
 import SwipeView from './components/SwipeView';
 import ChatWindow from './components/ChatWindow';
 import Settings from './components/Settings';
+import Filters from './components/Filters';
 import MatchCelebration from './components/MatchCelebration';
 import LoadingOverlay from './components/LoadingOverlay';
 import type { UserProfile, PredictionResponse } from './types';
 import api, { predictCompatibility, getCurrentUser, type UserResponse, API_URL } from './api';
-import { Sparkles, Settings as SettingsIcon } from 'lucide-react';
+import { Sparkles, Settings as SettingsIcon, Filter } from 'lucide-react';
 
 type View = 'login' | 'input' | 'prediction' | 'matches' | 'chat' | 'swipe' | 'bots';
 
 interface Match {
-  // ... (matches interface remains same)
   id: string;
   name: string;
   age: number;
@@ -47,6 +47,7 @@ function App() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [matchToCelebrate, setMatchToCelebrate] = useState<Match | null>(null);
 
   // Restore Session
@@ -118,7 +119,6 @@ function App() {
   };
 
   const handleBackFromChat = () => {
-    // Return to the previous list view (matches or bots) based on the active match
     const isBot = matches.find(m => m.id === activeMatchId)?.is_bot;
     setCurrentView(isBot ? 'bots' : 'matches');
     setActiveMatchId(null);
@@ -132,9 +132,8 @@ function App() {
 
   const handleSwipeRight = (matchId: string) => {
     console.log("Liked:", matchId);
-    // Simulate a match discovery for "Souls Synchronized!"
     const matched = matches.find(m => m.id === matchId);
-    if (matched && Math.random() > 0.3) { // 70% chance to "match" in this simulation
+    if (matched && Math.random() > 0.3) {
       setMatchToCelebrate(matched);
     }
   };
@@ -143,43 +142,51 @@ function App() {
     console.log("Passed:", matchId);
   };
 
-  // Get active match data
   const activeMatch = matches.find((m: Match) => m.id === activeMatchId);
-
-  // Filter matches
   const regularMatches = matches.filter(m => !m.is_bot);
   const botMatches = matches.find(m => m.is_bot) ? matches.filter(m => m.is_bot) : [];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-white dark:from-gray-900 dark:to-gray-800 font-sans text-gray-900 dark:text-white transition-colors duration-300">
 
-      {/* Floating Settings Button - only show if logged in and not in swipe/chat */}
+      {/* Action Buttons - only show if logged in and not in swipe/chat */}
       {isLoggedIn && currentView !== 'swipe' && currentView !== 'chat' && (
-        <button
-          onClick={() => setSettingsOpen(true)}
-          className="fixed top-6 right-6 z-40 bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700"
-          title="Settings"
-        >
-          <SettingsIcon className="text-gray-700 dark:text-gray-300" size={24} />
-        </button>
+        <div className="fixed top-6 right-6 z-40 flex gap-4">
+          <button
+            onClick={() => setFiltersOpen(true)}
+            className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700"
+            title="Discovery Filters"
+          >
+            <Filter className="text-gray-700 dark:text-gray-300" size={24} />
+          </button>
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="bg-white dark:bg-gray-800 p-4 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110 border border-gray-200 dark:border-gray-700"
+            title="Settings"
+          >
+            <SettingsIcon className="text-gray-700 dark:text-gray-300" size={24} />
+          </button>
+        </div>
       )}
 
-      {/* Settings Modal */}
+      {/* Modals */}
       <Settings
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
         onLogout={handleLogout}
       />
 
-      {/* Global Loading Overlay */}
+      <Filters
+        isOpen={filtersOpen}
+        onClose={() => setFiltersOpen(false)}
+      />
+
       <AnimatePresence>
         {loading && <LoadingOverlay message="Syncing Souls..." />}
       </AnimatePresence>
 
-      {/* Login Screen */}
       {currentView === 'login' && <Login onLogin={handleLogin} />}
 
-      {/* Input Screen */}
       {currentView === 'input' && (
         <div className="container mx-auto px-4 py-12 flex flex-col items-center">
           <header className="text-center mb-12">
@@ -210,14 +217,9 @@ function App() {
               Practice with AI Mentors
             </button>
           </div>
-
-          <footer className="mt-16 text-gray-400 dark:text-gray-500 text-sm focus:outline-none">
-            Built with React + FastAPI + CatBoost
-          </footer>
         </div>
       )}
 
-      {/* Prediction Story Card */}
       {currentView === 'prediction' && prediction && userData && (
         <StoryCard
           userData={userData}
@@ -227,9 +229,6 @@ function App() {
         />
       )}
 
-      {/* Add "View Matches" button to Story Card */}
-
-      {/* Match List View (Grid) */}
       {currentView === 'matches' && (
         <MatchList
           matches={regularMatches}
@@ -241,7 +240,6 @@ function App() {
         />
       )}
 
-      {/* Bots List View */}
       {currentView === 'bots' && (
         <MatchList
           matches={botMatches}
@@ -253,7 +251,6 @@ function App() {
         />
       )}
 
-      {/* Swipe View (Discovery) */}
       {currentView === 'swipe' && (
         <SwipeView
           matches={regularMatches}
@@ -261,13 +258,12 @@ function App() {
           onSwipeLeft={handleSwipeLeft}
           onViewDetail={(match) => {
             setActiveMatchId(match.id);
-            setCurrentView('prediction'); // Reuse StoryCard for details
+            setCurrentView('prediction');
           }}
           onClose={() => setCurrentView('matches')}
         />
       )}
 
-      {/* Chat Window */}
       {currentView === 'chat' && activeMatch && (
         <ChatWindow
           matchId={activeMatch.id}
@@ -277,7 +273,6 @@ function App() {
         />
       )}
 
-      {/* Match Celebration Overlay */}
       <AnimatePresence>
         {matchToCelebrate && (
           <MatchCelebration
