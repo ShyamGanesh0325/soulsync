@@ -138,6 +138,11 @@ export interface UserResponse extends UserProfile {
     id: number;
     email: string;
     full_name: string;
+    notifications_enabled?: boolean;
+    safe_mode_enabled?: boolean;
+    max_distance?: number;
+    min_age_pref?: number;
+    max_age_pref?: number;
 }
 
 export const getCurrentUser = async (): Promise<UserResponse> => {
