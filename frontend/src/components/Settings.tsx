@@ -1,10 +1,8 @@
-
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Moon, Sun, Bell, BellOff, Shield, Sparkles, Save, Loader2 } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
-import { getCurrentUser, updateCurrentUser } from '../api';
+import { getCurrentUser, updateCurrentUser, type UserResponse } from '../api';
 
 interface SettingsProps {
     isOpen: boolean;
@@ -18,6 +16,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
     const [safeMode, setSafeMode] = useState(true);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [fullUser, setFullUser] = useState<UserResponse | null>(null);
 
     // Load initial settings
     React.useEffect(() => {
@@ -26,6 +25,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
                 setLoading(true);
                 try {
                     const user = await getCurrentUser();
+                    setFullUser(user);
                     setNotifications(user.notifications_enabled ?? true);
                     setSafeMode(user.safe_mode_enabled ?? true);
                 } catch (err) {
@@ -42,9 +42,10 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
         setSaving(true);
         try {
             await updateCurrentUser({
+                ...(fullUser || {}),
                 notifications_enabled: notifications,
                 safe_mode_enabled: safeMode
-            });
+            } as UserResponse);
             onClose();
         } catch (err) {
             console.error("Failed to save settings:", err);

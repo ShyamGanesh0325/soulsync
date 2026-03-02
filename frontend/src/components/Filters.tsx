@@ -1,9 +1,7 @@
-
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MapPin, Users, Sparkles, Save, Loader2, Filter } from 'lucide-react';
-import api, { getCurrentUser, updateCurrentUser } from '../api';
+import api, { getCurrentUser, updateCurrentUser, type UserResponse } from '../api';
 
 interface FiltersProps {
     isOpen: boolean;
@@ -15,6 +13,7 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
     const [ageRange, setAgeRange] = useState<[number, number]>([18, 35]);
     const [loading, setLoading] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [fullUser, setFullUser] = useState<UserResponse | null>(null);
 
     // Load initial filters
     React.useEffect(() => {
@@ -23,6 +22,7 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
                 setLoading(true);
                 try {
                     const user = await getCurrentUser();
+                    setFullUser(user);
                     setDistance(user.max_distance || 50);
                     setAgeRange([user.min_age_pref || 18, user.max_age_pref || 35]);
                 } catch (err) {
@@ -39,10 +39,11 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
         setSaving(true);
         try {
             await updateCurrentUser({
+                ...(fullUser || {}),
                 max_distance: distance,
                 min_age_pref: ageRange[0],
                 max_age_pref: ageRange[1]
-            });
+            } as UserResponse);
             onClose();
         } catch (err) {
             console.error("Failed to save filters:", err);
@@ -67,7 +68,6 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
 
                     {/* Filters Panel Wrapper */}
                     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 pointer-events-none">
-                        原则:
                         <motion.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
