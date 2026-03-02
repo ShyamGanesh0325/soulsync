@@ -38,6 +38,11 @@ export interface UserProfile {
         fitness?: 'Daily' | 'Often' | 'Sometimes' | 'Rarely';
     };
     photos?: string[];
+    notifications_enabled?: boolean;
+    safe_mode_enabled?: boolean;
+    max_distance?: number;
+    min_age_pref?: number;
+    max_age_pref?: number;
 }
 
 export interface PredictionResponse {
