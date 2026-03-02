@@ -8,9 +8,10 @@ interface SettingsProps {
     isOpen: boolean;
     onClose: () => void;
     onLogout: () => void;
+    onUpdate?: (user: UserResponse) => void;
 }
 
-const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
+const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout, onUpdate }) => {
     const { theme, toggleTheme } = useTheme();
     const [notifications, setNotifications] = useState(true);
     const [safeMode, setSafeMode] = useState(true);
@@ -106,6 +107,7 @@ const Settings: React.FC<SettingsProps> = ({ isOpen, onClose, onLogout }) => {
             console.log("Bulletproof Payload Check - Final Payload:", finalPayload);
 
             await updateCurrentUser(finalPayload);
+            if (onUpdate) onUpdate(finalPayload);
             onClose();
         } catch (err: any) {
             console.error("STILL FAILING. Server response:", err.response?.data);

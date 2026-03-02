@@ -6,9 +6,10 @@ import api, { getCurrentUser, updateCurrentUser, type UserResponse } from '../ap
 interface FiltersProps {
     isOpen: boolean;
     onClose: () => void;
+    onUpdate?: (user: UserResponse) => void;
 }
 
-const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
+const Filters: React.FC<FiltersProps> = ({ isOpen, onClose, onUpdate }) => {
     const [distance, setDistance] = useState(50);
     const [ageRange, setAgeRange] = useState<[number, number]>([18, 35]);
     const [loading, setLoading] = useState(false);
@@ -103,6 +104,7 @@ const Filters: React.FC<FiltersProps> = ({ isOpen, onClose }) => {
             console.log("Bulletproof Payload Check - Final Payload:", finalPayload);
 
             await updateCurrentUser(finalPayload);
+            if (onUpdate) onUpdate(finalPayload);
             onClose();
         } catch (err: any) {
             console.error("STILL FAILING. Server response:", err.response?.data);

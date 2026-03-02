@@ -283,12 +283,17 @@ function App() {
             isOpen={settingsOpen}
             onClose={() => setSettingsOpen(false)}
             onLogout={handleLogout}
+            onUpdate={(updatedUser) => setUserData(updatedUser)}
           />
         )}
         {filtersOpen && (
           <Filters
             isOpen={filtersOpen}
             onClose={() => setFiltersOpen(false)}
+            onUpdate={(updatedUser) => {
+              setUserData(updatedUser);
+              loadMatches(); // Reload matches with new filter preferences
+            }}
           />
         )}
       </AnimatePresence>
